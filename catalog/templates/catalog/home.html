@@ -1,0 +1,12 @@
+{% extends 'catalog/index.html' %}
+
+
+{% block content %}
+<ul class="list-group">
+    {% for object in object_list %}
+    <li class="list-group-item">{{ object.name }}</li>
+    <a href="{% url 'catalog:item' object.pk %}" class="btn btn-secondary">Подробнее</a>
+    {% endfor %}
+</ul>
+
+{% endblock %}
