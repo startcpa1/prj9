@@ -2,10 +2,13 @@
 
 
 {% block content %}
+<div class="col-12 mb-5">
+    <a class="btn btn-outline-primary" href="{% url 'catalog:create_product' %}">Добавить продукт</a>
+</div>
 <ul class="list-group">
     {% for object in object_list %}
     <li class="list-group-item">{{ object.name }}</li>
-    <a href="{% url 'catalog:item' object.pk %}" class="btn btn-secondary">Подробнее</a>
+    <a href="{% url 'catalog:item' object.pk %}" class="btn btn-secondary">Подробнее</a> | <a href="{% url 'catalog:update_product' object.pk %}" class="btn btn-secondary">Изменить</a>
     {% endfor %}
 </ul>
 

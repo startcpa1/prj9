@@ -1,8 +1,10 @@
-from django.shortcuts import get_object_or_404
+from django.forms import inlineformset_factory
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
-from catalog.models import Product
+from catalog.forms import ProductForm, VersionForm
+from catalog.models import Product, Version
 
 
 class ProductListView(ListView):
@@ -19,12 +21,34 @@ class ProductDetailView(DetailView):
     }
 
 
-# def home(request):
-#     context = {
-#         'object_list': Product.objects.all(),
-#         'title': "Каталог продуктов"
-#     }
-#     return render(request, 'catalog/home.html', context)
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:home')
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:home')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        version_formset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        if self.request.method == 'POST':
+            context_data['formset'] = version_formset(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = version_formset(instance=self.object)
+        return context_data
+
+    def form_valid(self, form):
+        formset = self.get_context_data()['formset']
+        self.object = form.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+        return super().form_valid(form)
+
 
 def contacts(request):
     if request.method == 'POST':
@@ -33,13 +57,3 @@ def contacts(request):
         message = request.POST.get('message')
         print(f'You have new message from {name}({email}): {message}')
     return render(request, 'catalog/contact.html')
-
-
-# def item(request, pk):
-#     product = get_object_or_404(Product, pk=pk)
-#     context = {
-#         'object': product,
-#         'title': "Карточка продукта",
-#
-#     }
-#     return render(request, 'catalog/item.html', context)
