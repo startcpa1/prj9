@@ -31,12 +31,21 @@ class Product(models.Model):
         verbose_name = 'товар'
         verbose_name_plural = 'товары'
 
+    @property
+    def active_version(self):
+        return Version.objects.filter(is_active=True, product_id=self.id).first()
+
+    class Meta:
+        verbose_name = 'Продукт'
+        verbose_name_plural = 'Продукты'
+        ordering = ('category', 'name',)
+
 
 class Version(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Продукт')
-    number = models.IntegerField(default=1, verbose_name='Номер')
-    name = models.CharField(max_length=100, default='Создана', verbose_name='Название')
-    is_active = models.BooleanField(default=True, verbose_name='Активная')
+    number = models.IntegerField(default='', verbose_name='Номер версии')
+    name = models.CharField(max_length=100, default='', verbose_name='Название версии')
+    is_active = models.BooleanField(default=True, verbose_name='Активная версия')
 
     def __str__(self):
         return f'{self.name} {self.number}'

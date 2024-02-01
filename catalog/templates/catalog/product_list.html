@@ -7,8 +7,9 @@
 </div>
 <ul class="list-group">
     {% for object in object_list %}
-    <li class="list-group-item">{{ object.name }}</li>
-    <a href="{% url 'catalog:item' object.pk %}" class="btn btn-secondary">Подробнее</a> | <a href="{% url 'catalog:update_product' object.pk %}" class="btn btn-secondary">Изменить</a>
+    <li class="list-group-item"><h5>{{ object.name }}</h5></li>
+    <a class="btn btn-primary b-5" href="{% url 'catalog:item' object.pk %}">Подробнее</a><br>
+    <a  class="btn btn-primary" href="{% url 'catalog:update_product' object.pk %}">Изменить</a>
     {% endfor %}
 </ul>
 
